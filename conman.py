@@ -2,6 +2,7 @@ from tkinter import simpledialog, messagebox
 import tkinter as tk
 from contact import *
 from edit_contact import EditContactUI
+from filter import FilterUI
 
 class ContactsUI:
 
@@ -26,6 +27,11 @@ class ContactsUI:
         self.lst_contacts.config(yscrollcommand=self.listbox_scrollbar.set)
         self.listbox_scrollbar.config(command=self.lst_contacts.yview)
 
+
+        self.btn_filter = tk.Button(self.app, text="Filter", command=self.filter, height=2)
+        self.btn_filter.grid(row=95, column=2,  padx=(10,10), pady=(5,20))
+        self.btn_filter.config(font=("Calibari", 12), width=10)
+        
         self.btn_edit = tk.Button(self.app, text="Edit", command=self.edit, height=2)
         self.btn_edit.grid(row=96, column=2,  padx=(10,10), pady=(5,20))
         self.btn_edit.config(font=("Calibari", 12), width=10)
@@ -84,6 +90,9 @@ class ContactsUI:
                 messagebox.showerror("No Item Selected", "For editting, you need to first select a contact!")
         else:
             messagebox.showerror("Edit OnProgress", "First finish your previous edit then go for a new edit!")
+
+    def filter(self):
+        FilterUI().start()
 
     def close(self):
         # ON CLOSE EVENT
