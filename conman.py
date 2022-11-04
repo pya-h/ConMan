@@ -3,13 +3,15 @@ import tkinter as tk
 from contact import *
 from edit_contact import EditContactUI
 from filter import FilterUI
+from config import *
 
 class ContactsUI:
 
-    def __init__(self) -> None:
+    def __init__(self, db_file = DATABASE_FILE) -> None:
         self.app = None
         self.edit_form = None
-
+        self.db_file = db_file
+        
     def ask(self, title, question):
         inputbox = tk.Tk()
         inputbox.withdraw()
@@ -51,6 +53,7 @@ class ContactsUI:
         self.app.minsize(800,600)
         self.app.grid_rowconfigure(0, weight=1)
         self.app.grid_columnconfigure(0, weight=1)
+        self.load()
         self.app.mainloop()
 
     def add(self):
@@ -63,11 +66,29 @@ class ContactsUI:
         self.update()
         Contact.Count()
         
-    def update(self):
+    def update(self, save = True):
         self.lst_contacts.delete(0, tk.END)
-        for contact in Contact.All:
-            self.lst_contacts.insert(tk.END, contact)
-        
+        try:
+            if save:
+                with open(self.db_file, 'w') as db:
+                    for contact in Contact.All:
+                        self.lst_contacts.insert(tk.END, contact)
+                        db.write(contact.to_row())
+            else:
+                for contact in Contact.All:
+                    self.lst_contacts.insert(tk.END, contact)
+        except Exception as ex:
+            print("Unknown error: ", ex)
+            messagebox.showerror("Unable to save!", "Something unknown went wrong while trying to save your last changes.")
+            
+    def load(self):
+        try:
+            with open(self.db_file, 'r') as db:
+                for row in db:
+                    Contact.RowToContact(row)  # adds object automatically to contacts list 
+            self.update(save = False)
+        except Exception as ex:
+            print(ex)
     def select_contact(self, event):
         selection = event.widget.curselection()
         Contact.SelectedIndex = selection[0]

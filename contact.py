@@ -21,3 +21,11 @@ class Contact:
         
     def __str__(self) -> str:
         return f'{self.fn} {self.ln}                         {self.age}                         {self.phone}'
+    
+    def to_row(self):
+        return f'{self.fn}\t{self.ln}\t{self.age}\t{self.phone}\n'
+    
+    def RowToContact(line):
+        fn, ln, age, phone = line.replace('\n', '').split('\t')
+        return Contact(fn, ln, age, phone)
+ 
